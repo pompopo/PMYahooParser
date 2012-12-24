@@ -38,6 +38,7 @@
     if (!_appKey || !aString || !block) {
         return;
     }
+
     _block = block;
     
     // results parameter
@@ -79,62 +80,61 @@
         }
     }
 
+    
     // filter parameter
     NSString *filterParam = @"";
-if (_filter > 0) {
-    NSMutableString *tmpFilterParam = [NSMutableString string];
-    if (_filter & PMFilterAdjective) {
-        [tmpFilterParam appendString:@"|1"];
+    if (_filter > 0) {
+        NSMutableString *tmpFilterParam = [NSMutableString string];
+        if (_filter & PMFilterAdjective) {
+            [tmpFilterParam appendString:@"|1"];
+        }
+        if (_filter & PMFilterAdjectivalNoun) {
+            [tmpFilterParam appendString:@"|2"];
+        }
+        if (_filter & PMFilterInterjection) {
+            [tmpFilterParam appendString:@"|3"];
+        }
+        if (_filter & PMFilterAdverb) {
+            [tmpFilterParam appendString:@"|4"];
+        }
+        if (_filter & PMFilterAdnominalAdjective) {
+            [tmpFilterParam appendString:@"|5"];
+        }
+        if (_filter & PMFilterConjunction) {
+            [tmpFilterParam appendString:@"|6"];
+        }
+        if (_filter & PMFilterSuffix) {
+            [tmpFilterParam appendString:@"|7"];
+        }
+        if (_filter & PMFilterPrefix) {
+            [tmpFilterParam appendString:@"|8"];
+        }
+        if (_filter & PMFilterNoun) {
+            [tmpFilterParam appendString:@"|9"];
+        }
+        if (_filter & PMFilterVerb) {
+            [tmpFilterParam appendString:@"|10"];
+        }
+        if (_filter & PMFilterParticle) {
+            [tmpFilterParam appendString:@"|11"];
+        }
+        if (_filter & PMFilterAuxiliaryVerb) {
+            [tmpFilterParam appendString:@"|12"];
+        }
+        if (_filter & PMFilterSpecial) {
+            [tmpFilterParam appendString:@"|13"];
+        }
+        if (tmpFilterParam.length > 0) {
+            filterParam = [NSString stringWithFormat:@"&filter=%@", [tmpFilterParam substringFromIndex:1]];
+        }
     }
-    if (_filter & PMFilterAdjectivalNoun) {
-        [tmpFilterParam appendString:@"|2"];
-    }
-    if (_filter & PMFilterInterjection) {
-        [tmpFilterParam appendString:@"|3"];
-    }
-    if (_filter & PMFilterAdverb) {
-        [tmpFilterParam appendString:@"|4"];
-    }
-    if (_filter & PMFilterAdnominalAdjective) {
-        [tmpFilterParam appendString:@"|5"];
-    }
-    if (_filter & PMFilterConjunction) {
-        [tmpFilterParam appendString:@"|6"];
-    }
-    if (_filter & PMFilterSuffix) {
-        [tmpFilterParam appendString:@"|7"];
-    }
-    if (_filter & PMFilterPrefix) {
-        [tmpFilterParam appendString:@"|8"];
-    }
-    if (_filter & PMFilterNoun) {
-        [tmpFilterParam appendString:@"|9"];
-    }
-    if (_filter & PMFilterVerb) {
-        [tmpFilterParam appendString:@"|10"];
-    }
-    if (_filter & PMFilterParticle) {
-        [tmpFilterParam appendString:@"|11"];
-    }
-    if (_filter & PMFilterAuxiliaryVerb) {
-        [tmpFilterParam appendString:@"|12"];
-    }
-    if (_filter & PMFilterSpecial) {
-        [tmpFilterParam appendString:@"|13"];
-    }
-    if (tmpFilterParam.length > 0) {
-        filterParam = [NSString stringWithFormat:@"&filter=%@", [tmpFilterParam substringFromIndex:1]];
-    }
-}
     // TODO:正しくエンコードされないものがある
-    NSString *encodedStr = [aString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *urlStr = [NSString stringWithFormat:@"%@?appid=%@&sentence=%@%@%@%@", kYahooAPIBaseURL, _appKey, encodedStr, resultParam, responseParam, filterParam];
-//    NSLog(urlStr);
+    NSString *urlStr = [[NSString stringWithFormat:@"%@?appid=%@&sentence=%@%@%@%@", kYahooAPIBaseURL, _appKey, aString, resultParam, responseParam, filterParam] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSLog(urlStr);
     NSURL *url = [NSURL URLWithString:urlStr];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [NSURLConnection connectionWithRequest:request
-                                  delegate:self];
-    
+                                  delegate:self];    
 }
 /////////////////// private methods
 
@@ -144,13 +144,14 @@ if (_filter > 0) {
     if (! _data) {
         _data = [[NSMutableData alloc] init];
     }
+
     [_data appendData:data];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     if (_data) {
-//        NSLog(@"DATA = %@",[[NSString alloc] initWithData:_data
-//              encoding:NSUTF8StringEncoding]);
+        NSLog(@"DATA = %@",[[NSString alloc] initWithData:_data
+                                                 encoding:NSUTF8StringEncoding]);
         NSData *data = [NSData dataWithData:_data];
         NSXMLParser *parser = [[NSXMLParser alloc]initWithData:data];
         parser.delegate = self;
