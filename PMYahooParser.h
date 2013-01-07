@@ -17,7 +17,10 @@
 @property (nonatomic) int results;
 @property (nonatomic) int response;
 @property (nonatomic) unsigned long filter;
-
+@property (nonatomic) int maResponse;
+@property (nonatomic) unsigned long maFilter;
+@property (nonatomic) int uniqResponse;
+@property (nonatomic) unsigned long uniqFilter;
 
 
 enum {
